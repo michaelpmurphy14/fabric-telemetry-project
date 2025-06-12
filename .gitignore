@@ -1,0 +1,11 @@
+__pycache__/
+*.bin
+*.elf
+*.pyc
+*.env
+*.DS_Store
+build/
+node_modules/
+target/
+.idea/
+.vscode/
