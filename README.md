@@ -1,3 +1,5 @@
+![CI](https://github.com/michaelpmurphy14/fabric-telemetry-project/actions/workflows/secure-pipeline.yml/badge.svg)
+
 # Fabric Telemetry Demo
 
 A secure, extensible telemetry ingestion pipeline using:
