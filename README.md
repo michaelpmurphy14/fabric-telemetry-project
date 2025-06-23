@@ -60,6 +60,80 @@ dashboards/ # Grafana JSON exports
 
 ---
 
+## 🔐 Secure Setup Instructions
+
+This project uses local-only credentials and certificates to protect sensitive information. Follow these steps to configure your environment without exposing secrets in the repository.
+
+### 1. `secrets.h`
+
+This file contains Wi-Fi credentials, MQTT usernames/passwords, and AWS endpoints.
+
+- **Do not commit** this file to GitHub.  
+- Use the provided `secrets_example.h` as a template.
+
+#### To configure:
+
+1. Duplicate the template:  
+   ```bash
+    esp32-firmware/include/secrets_example.h esp32-firmware/include/secrets.h
+2. Open esp32-firmware/include/secrets.h and update the placeholders:
+    ```bash
+       #define WIFI_SSID       "your-network-ssid"
+       #define WIFI_PASSWORD   "your-wifi-password"
+
+       #define HIVEMQ_ENDPOINT "your-hivemq-endpoint"
+       #define HIVEMQ_PORT     8883
+       #define HIVEMQ_USER     "your-mqtt-username"
+       #define HIVEMQ_PASS     "your-mqtt-password"
+
+       #define AWS_IOT_ENDPOINT "your-aws-iot-endpoint"
+       #define AWS_IOT_PORT     8883
+
+### certificates.h
+
+This file holds TLS certificates for HiveMQ and AWS.
+
+- **Do not commit** this file to GitHub.
+- Use certificates_example.h to see the expected structure.
+
+#### To configure:
+
+1. Duplicate the example:
+   ```bash
+   esp32-firmware/certs/certificates_example.h esp32-firmware/certs/certificates.h
+2. Paste your real PEM-formatted certificates and keys into the placeholders:
+   ```bash
+   const char* AWS_CERT_CA = R"EOF(
+    -----BEGIN CERTIFICATE-----
+    ...your CA cert here...
+    -----END CERTIFICATE-----
+    )EOF";
+
+    const char* AWS_CERT_CRT = R"EOF(
+    -----BEGIN CERTIFICATE-----
+    ...your client cert here...
+    -----END CERTIFICATE-----
+    )EOF";
+
+    const char* AWS_CERT_PRIVATE = R"EOF(
+    -----BEGIN RSA PRIVATE KEY-----
+    ...your private key here...
+    -----END RSA PRIVATE KEY-----
+    )EOF";
+
+### ✅ .gitignore Configuration
+These entries ensure your sensitive files stay local:
+   ```bash
+   esp32-firmware/include/secrets.h
+   esp32-firmware/include/secrets_station*.h
+   esp32-firmware/certs/certificates.h
+   ```
+
+
+Anyone cloning the repo can copy the _example.h files, fill in their own values, and build without risk of leaking secrets.
+
+---
+
 ## 🧠 Author
 
 Michael P. Murphy  
