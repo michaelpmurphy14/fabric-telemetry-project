@@ -1,0 +1,8 @@
+{
+    "device_id": "esp32cam-02",
+    "mqtt_base_topic": "factory/line1/stationB",
+    "temp_min": 18.0,
+    "temp_max": 28.0,
+    "alert_rssi": -70
+  }
+  

@@ -133,6 +133,58 @@ These entries ensure your sensitive files stay local:
 Anyone cloning the repo can copy the _example.h files, fill in their own values, and build without risk of leaking secrets.
 
 ---
+## ↔️ Building for Multiple Nodes
+
+This project uses per-node JSON configs and a small generator script to produce a single `node_config.h` at build time. You must tell the compiler which JSON to use via a build flag.
+
+### 1. Manual Build with Arduino-CLI
+
+```bash
+# Generate node_config.h from your chosen JSON:
+./scripts/gen-config.sh configs/nodeA.json
+
+# Compile & upload, passing NODE_CONFIG to the preprocessor
+arduino-cli compile \
+  --fqbn esp32:esp32:esp32dev \
+  -D NODE_CONFIG=\"configs/nodeA.json\" \
+  esp32-firmware/src/fabric-esp32-test.ino
+
+arduino-cli upload \
+  --fqbn esp32:esp32:esp32dev \
+  -D NODE_CONFIG=\"configs/nodeA.json\" \
+  esp32-firmware/src/fabric-esp32-test.ino
+```
+Replace nodeA.json with whichever config (e.g. nodeB.json) you want to build.
+
+### 2. One-step Shell Scripts
+You can wrap both steps into a single script for convenience. For example, create:
+```bash
+# scripts/build-nodeA.sh
+#!/usr/bin/env bash
+./scripts/gen-config.sh configs/nodeA.json
+arduino-cli compile --fqbn esp32:esp32:esp32dev \
+  -D NODE_CONFIG=\"configs/nodeA.json\" \
+  esp32-firmware/src/fabric-esp32-test.ino
+```
+
+Make it executable (chmod +x scripts/build-nodeA.sh), then simply run:
+```bash
+./scripts/build-nodeA.sh
+```
+### 3. PlatformIO / VSCode Integration
+If you prefer PlatformIO in VSCode, add an environment per node to platformio.ini:
+```bash
+[env:nodeA]
+platform = espressif32
+board    = esp32dev
+framework = arduino
+build_flags =
+  -DNODE_CONFIG=\"configs/nodeA.json\"
+```
+
+Then in the bottom status bar select env:nodeA and click Build or Upload—PlatformIO will automatically pass the right flag and generate node_config.h. Tip: Be sure to add esp32-firmware/include/node_config.h to your .gitignore, since it’s regenerated on each build.
+
+---
 
 ## 🧠 Author
 

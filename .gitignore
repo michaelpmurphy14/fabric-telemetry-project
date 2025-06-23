@@ -13,4 +13,5 @@ target/
 esp32-firmware/include/secrets.h
 esp32-firmware/include/secrets_station*.h
 esp32-firmware/certs/certificates.h
-
+# ignore generated per-node header
+esp32-firmware/include/node_config.h

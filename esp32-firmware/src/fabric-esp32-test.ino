@@ -1,18 +1,23 @@
-#include "secrets.h"         // WiFi + endpoint + credentials
-#include "certificates.h"    // AWS and HiveMQ certs (R"EOF" blocks)
-
-#ifndef WIFI_SSID
-#error "Missing WIFI_SSID: Did you forget to create secrets.h from secrets_example.h?"
-#endif
-
-#ifndef AWS_CERT_CA
-#error "Missing AWS_CERT_CA: Did you forget to create certificates.h from certificates_example.h?"
-#endif
-
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
+
+#include "secrets.h"         // WiFi + endpoint + credentials
+#ifndef WIFI_SSID
+  #error "Missing WIFI_SSID: Did you forget to create secrets.h from secrets_example.h?"
+#endif
+
+#include "certificates.h"    // AWS and HiveMQ certs (R"EOF" blocks)
+#ifndef AWS_CERT_CA
+  #error "Missing AWS_CERT_CA: Did you forget to create certificates.h from certificates_example.h?"
+#endif
+
+
+#include "node_config.h"    // <-- the generated header
+#ifndef NODE_CONFIG
+  #error "NODE_CONFIG not defined. Build with -DNODE_CONFIG=\"configs/nodeA.json\""
+#endif
 
 // Global MQTT clients
 WiFiClientSecure awsNet;
@@ -94,7 +99,7 @@ void loop() {
 
   // JSON payload
   StaticJsonDocument<256> doc;
-  doc["device_id"] = "esp32cam-01";
+  doc["device_id"] = DEVICE_ID;
   doc["status"] = "online";
   doc["temp_c"] = temp;
   doc["uptime_sec"] = millis() / 1000;
@@ -102,7 +107,7 @@ void loop() {
   doc["heap_free"] = heap_free;
 
   String alert = "";
-  if (rssi < -75 || heap_free < 15000) {
+  if (rssi < ALERT_RSSI || heap_free < 15000) {
     alert = "weak signal or low memory";
   } else if (temp > 28.0) {
     alert = "overtemperature";
@@ -115,9 +120,10 @@ void loop() {
   serializeJson(doc, payload);
 
   // Dual publish
-  hiveClient.publish("factory/line1/stationA/esp32cam/status", payload);
-  awsClient.publish("factory/line1/stationA/esp32cam/status", payload);
-
+  String topic = String(MQTT_BASE_TOPIC) + "/status";
+  hiveClient.publish(topic.c_str(), payload);
+  awsClient.publish(topic.c_str(), payload);
+  
   Serial.println("Published telemetry to HiveMQ and AWS.");
   delay(5000);
 }
