@@ -43,9 +43,11 @@ CI/CD Workflow includes:
 - [x] Dual MQTT subscriber (Rust & Go)
 - [x] AWS-native telemetry pipeline
 - [x] Grafana Cloud dashboards
-- [ ] Multi-node template support
+- [x] Multi-node template support
 - [ ] CI/CD deploy + alerting
 - [ ] OTA update pipeline for ESP32 firmware
+- [ ] C&C from Cloud to Node
+- [ ] Local Edge Logic
 
 ---
 
