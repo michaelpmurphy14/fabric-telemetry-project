@@ -1,6 +1,14 @@
 #include "secrets.h"         // WiFi + endpoint + credentials
 #include "certificates.h"    // AWS and HiveMQ certs (R"EOF" blocks)
 
+#ifndef WIFI_SSID
+#error "Missing WIFI_SSID: Did you forget to create secrets.h from secrets_example.h?"
+#endif
+
+#ifndef AWS_CERT_CA
+#error "Missing AWS_CERT_CA: Did you forget to create certificates.h from certificates_example.h?"
+#endif
+
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>

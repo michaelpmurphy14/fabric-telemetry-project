@@ -9,3 +9,8 @@ node_modules/
 target/
 .idea/
 .vscode/
+# Ignore actual secrets
+esp32-firmware/include/secrets.h
+esp32-firmware/include/secrets_station*.h
+esp32-firmware/certs/certificates.h
+
