@@ -1,0 +1,18 @@
+{
+  "sql": "SELECT device_id, temp_c, uptime_sec FROM 'factory/line1/stationA/esp32cam/status'",
+  "ruleDisabled": false,
+  "actions": [{
+    "timestream": {
+      "roleArn": "arn:aws:iam::<account-id>:role/iot-timestream-role",
+      "databaseName": "factoryTelemetry",
+      "tableName": "stationData",
+      "dimensions": [
+        { "name": "device_id", "value": "${device_id}" }
+      ],
+      "timestamp": {
+        "value": "${timestamp()}",
+        "unit": "MILLISECONDS"
+      }
+    }
+  }]
+}
